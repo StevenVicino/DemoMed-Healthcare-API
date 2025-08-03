@@ -15,7 +15,7 @@ async function fetchPatients(
           headers: { "x-api-key": apiKey },
         }
       );
-
+      console.log(JSON.stringify(res));
       if (res.status === 429) {
         const retryAfter = res.headers.get("retry-after") || 2000;
         console.log(`Rate limited. Retrying after ${retryAfter}ms...`);
@@ -40,7 +40,7 @@ async function fetchPatients(
     }
   }
 
-  throw new Error(`Failed to fetch page ${page} after ${MAX_RETRIES} retries.`);
+  throw new Error(`Failed to fetch page ${page} after ${maxRetries} retries.`);
 }
 
 function sleep(ms) {

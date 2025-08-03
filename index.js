@@ -34,11 +34,11 @@ async function main() {
       MAX_RETRIES
     );
     if (result?.data?.length) {
-      console.log(JSON.stringify(result.data));
       allPatients.push(...result.data);
-      hasNext = result.pagination?.hasNext;
+      console.log(JSON.stringify(result.pagination));
       page++;
-    } else {
+    }
+    if (result?.pagination?.hasNext === false) {
       hasNext = false;
     }
   }
@@ -61,8 +61,9 @@ async function main() {
     if (!invalid) {
       const risk = bpRisk(bp) + tempRisk(temp) + ageRisk(age);
       if (risk >= 4) highRisk.push(patient.patient_id);
-      if (temp >= 99.6) feverPatients.push(patient.patient_id);
     }
+
+    if (temp && temp >= 99.6) feverPatients.push(patient.patient_id);
   }
 
   const submission = {
@@ -70,7 +71,7 @@ async function main() {
     fever_patients: feverPatients,
     data_quality_issues: dataQualityIssues,
   };
-
+  console.log(JSON.stringify(allPatients));
   console.log("Submitting this payload:\n", submission);
   await submitAssessment(submission, BASE_URL, API_KEY);
 }
